@@ -104,7 +104,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       </div>
       <div class="field" style="margin-bottom:0;">
         <label>Checked by</label>
-        <select id="c-staff"><option value="">Select staff…</option></select>
+        <input type="text" id="c-staff" placeholder="Enter your name"/>
       </div>
     </div>
     <div class="err" id="err-step1"></div>
@@ -180,7 +180,6 @@ function load(){
   try{const d=localStorage.getItem(SK_SETTINGS);if(d){const s=JSON.parse(d);settings={...settings,...s};if(!settings.scriptUrl)settings.scriptUrl='https://script.google.com/macros/s/AKfycbzk8JjxFkesBgvDpwN0akAla-hJBzPvqB7P6SejzcCWpm3w8fyJEzgDqvqe774AKC-kzA/exec';}}catch(e){}
   document.getElementById('c-date').valueAsDate=new Date();
   document.getElementById('c-time').value=new Date().toTimeString().slice(0,5);
-  populateStaffDropdown();
   updateTodayStatus();
   updateSync(settings.scriptUrl?'ready':'local');
 }
@@ -198,13 +197,6 @@ function updateSync(state){
 function colorDot(color,size=14){
   const c=KNIFE_COLORS[color]||KNIFE_COLORS.yellow;
   return`<span class="color-dot" style="width:${size}px;height:${size}px;background:${c.hex};" title="${c.label}"></span>`;
-}
-function populateStaffDropdown(){
-  const sel=document.getElementById('c-staff');
-  const cur=sel.value;
-  sel.innerHTML='<option value="">Select staff…</option>';
-  settings.staff.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o);});
-  if(cur)sel.value=cur;
 }
 
 function goCheckStep2(type){
