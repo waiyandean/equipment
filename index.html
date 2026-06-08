@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Knife Registry</title>
+<title>Knife Check</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Knife Registry"/>
+<meta name="apple-mobile-web-app-title" content="Knife Check"/>
 <meta name="theme-color" content="#1a1916"/>
 <style>
 :root{
@@ -23,201 +23,78 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;}
-
-/* Header */
 .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
 .app-title{font-size:17px;font-weight:400;}
 .app-title span{color:var(--text-muted);}
+.header-right{display:flex;align-items:center;gap:10px;}
 .sync-badge{font-size:12px;font-family:monospace;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;color:var(--text-muted);}
-
-/* Tabs */
-.tab-bar{display:flex;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:49px;z-index:19;}
-.tab{flex:1;padding:11px 4px;font-size:12px;text-align:center;cursor:pointer;color:var(--text-muted);border:none;background:none;font-family:var(--font);border-bottom:2px solid transparent;transition:color .15s;}
-.tab.active{color:var(--text);border-bottom-color:var(--text);}
-
-/* Content */
 .content{padding:16px;max-width:640px;margin:0 auto;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
 .card-label{font-size:11px;font-family:monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;}
 .field{margin-bottom:12px;}
 .field label{display:block;font-size:12px;font-family:monospace;color:var(--text-muted);margin-bottom:6px;letter-spacing:.03em;}
 .field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;font-family:var(--font);background:var(--surface);color:var(--text);outline:none;appearance:none;-webkit-appearance:none;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
-.field textarea{resize:vertical;min-height:72px;}
+.field input:focus,.field select:focus{border-color:var(--accent);}
 .field-row{display:flex;gap:10px;}
 .field-row .field{flex:1;}
-
-/* Buttons */
 .btn{width:100%;padding:12px;border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);cursor:pointer;border:none;transition:opacity .15s;}
 .btn-primary{background:var(--accent);color:var(--accent-fg);}
 .btn-primary:active{opacity:.85;}
-.btn-primary:disabled{opacity:.4;cursor:default;}
-.btn-secondary{background:transparent;border:1px solid var(--border-strong);color:var(--text);}
 .btn-sm{font-size:12px;padding:5px 11px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:var(--font);}
-.btn-sm:active{background:var(--bg);}
-.btn-danger-sm{color:var(--danger-text);border-color:transparent;}
-.btn-success{background:#2d6e2d;color:#fff;}
-
-/* Section headers */
 .section-header{display:flex;align-items:center;gap:10px;margin:4px 0 10px;}
 .section-title{font-size:11px;font-family:monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);}
 .section-line{flex:1;height:1px;background:var(--border);}
-
-/* Knife color dot */
 .color-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(0,0,0,.15);flex-shrink:0;display:inline-block;}
-
-/* Register knife cards */
-.knife-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
-.knife-item.withdrawn{opacity:.55;}
-.knife-id{font-size:16px;font-weight:600;font-family:monospace;min-width:44px;}
-.knife-body{flex:1;min-width:0;}
-.knife-type{font-size:14px;font-weight:500;}
-.knife-desc{font-size:12px;color:var(--text-muted);margin-top:2px;}
-.knife-actions{display:flex;gap:6px;flex-shrink:0;}
-
-/* Status badges */
-.badge{font-size:10px;font-family:monospace;border-radius:20px;padding:2px 8px;}
-.badge-active{background:var(--success-bg);color:var(--success-text);border:1px solid var(--success-border);}
-.badge-withdrawn{background:var(--bg);color:var(--text-hint);border:1px solid var(--border);}
-
-/* Check knife cards */
 .check-knife-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;transition:border-color .2s,background .2s;}
 .check-knife-card.state-present{border-color:var(--success-border);background:var(--success-bg);}
+.check-knife-card.state-damaged{border-color:var(--warn-border);background:var(--warn-bg);}
+.check-knife-card.state-missing{border-color:var(--danger-border);background:var(--danger-bg);}
 .check-knife-top{display:flex;align-items:center;gap:10px;}
 .check-knife-info{flex:1;}
 .check-knife-name{font-size:14px;font-weight:500;}
 .check-knife-sub{font-size:12px;color:var(--text-muted);margin-top:2px;}
-.check-btns{display:flex;gap:8px;margin-top:12px;}
-.check-btn{flex:1;padding:10px;border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text);font-weight:500;}
-.check-btn-present{border-color:var(--success-border);color:var(--success-text);background:var(--success-bg);}
-.check-btn-present:active{opacity:.8;}
-.check-btn-issue{border-color:var(--danger-border);color:var(--danger-text);background:var(--danger-bg);}
-.check-btn-issue:active{opacity:.8;}
-.check-btn-undo{border-color:var(--border);color:var(--text-muted);background:transparent;font-size:12px;flex:none;padding:6px 14px;}
-
-/* Issue sub-form */
-.issue-form{margin-top:12px;padding-top:12px;border-top:1px solid var(--danger-border);}
-.issue-type-btns{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
-.issue-type-btn{font-size:12px;padding:5px 12px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:var(--font);}
-.issue-type-btn.selected{border-color:var(--danger-text);background:var(--danger-bg);color:var(--danger-text);}
+.check-btn-undo{font-size:12px;padding:6px 14px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:var(--font);margin-top:10px;}
+.issue-form{margin-top:10px;padding-top:10px;}
 .production-held-row{display:flex;align-items:flex-start;gap:10px;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius-sm);padding:10px 12px;margin-top:8px;}
 .production-held-row input[type=checkbox]{width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--warn-text);}
 .production-held-row label{font-size:13px;color:var(--warn-text);cursor:pointer;line-height:1.4;}
-
-/* History records */
-.rec{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;}
-.rec-header{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;}
-.rec-header:active{background:var(--bg);}
-.rec-pass{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.rec-pass-ok{background:var(--success-bg);border:1px solid var(--success-border);}
-.rec-pass-fail{background:var(--danger-bg);border:1px solid var(--danger-border);}
-.rec-body{flex:1;}
-.rec-title{font-size:13px;font-weight:500;}
-.rec-meta{font-size:12px;color:var(--text-muted);margin-top:2px;}
-.rec-detail{padding:0 16px 14px;border-top:1px solid var(--border);display:none;}
-.rec-detail.open{display:block;}
-.rec-detail-row{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--border);font-size:13px;}
-.rec-detail-row:last-child{border-bottom:none;}
-
-/* Staff list items */
-.staff-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
-.staff-item:last-child{border-bottom:none;}
-
-/* err */
 .err{display:none;color:var(--danger-text);background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:var(--radius-sm);padding:9px 12px;font-size:13px;margin-bottom:12px;}
-
-/* Alerts */
-.alert{border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;margin-bottom:12px;}
-.alert-warn{background:var(--warn-bg);border:1px solid var(--warn-border);color:var(--warn-text);}
-.alert-danger{background:var(--danger-bg);border:1px solid var(--danger-border);color:var(--danger-text);}
-.alert-ok{background:var(--success-bg);border:1px solid var(--success-border);color:var(--success-text);}
-
-/* Empty */
+.alert-warn{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;margin-bottom:12px;color:var(--warn-text);}
 .empty{text-align:center;padding:48px 24px;color:var(--text-muted);}
-.empty-icon{font-size:40px;margin-bottom:10px;}
-.empty-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px;}
-
-/* Toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--accent-fg);padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99;white-space:nowrap;}
 .toast.show{opacity:1;}
-
-/* Modals */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:50;display:flex;align-items:flex-end;}
-.modal-box{background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:20px;width:100%;max-height:90vh;overflow-y:auto;}
-.modal-title{font-size:16px;font-weight:500;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;}
-.modal-close{font-size:24px;color:var(--text-muted);background:none;border:none;cursor:pointer;line-height:1;}
-
-/* Color picker */
-.color-picker{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
-.color-option{width:32px;height:32px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:transform .1s;}
-.color-option.selected{border-color:var(--text);transform:scale(1.15);}
-
-/* Submit summary */
-.submit-summary{font-size:13px;font-family:monospace;color:var(--text-muted);text-align:center;margin-bottom:8px;}
-
-/* ── Step 1: session type selection ── */
+/* Session type buttons */
 .session-type-btn{width:100%;display:flex;align-items:center;gap:14px;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;cursor:pointer;font-family:var(--font);text-align:left;transition:border-color .15s,background .15s;}
 .session-type-btn:active{background:var(--bg);border-color:var(--border-strong);}
-.session-type-icon{width:46px;height:46px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
 .session-type-label{font-size:16px;font-weight:500;color:var(--text);}
 .session-type-sub{font-size:12px;color:var(--text-muted);margin-top:3px;}
 .session-type-arrow{font-size:24px;color:var(--text-hint);margin-left:auto;flex-shrink:0;}
-.session-type-btn.opening:active .session-type-icon{background:var(--success-bg);}
-.session-type-btn.closing:active .session-type-icon{background:var(--bg);}
-
-/* ── Step 2: session context bar ── */
+/* Context bar */
 .session-ctx-bar{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;}
-.ctx-type{font-size:15px;font-weight:500;}
-.ctx-meta{font-size:12px;color:var(--text-muted);margin-top:2px;}
-
-/* ── Three-state check buttons ── */
+/* Three-state check buttons */
 .check-status-btns{display:flex;gap:6px;margin-top:12px;}
-.check-status-btn{flex:1;padding:10px 4px;border-radius:var(--radius-sm);font-size:12px;font-family:var(--font);font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);text-align:center;line-height:1.3;transition:background .1s,border-color .1s;}
+.check-status-btn{flex:1;padding:10px 4px;border-radius:var(--radius-sm);font-size:12px;font-family:var(--font);font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);text-align:center;line-height:1.3;}
 .check-status-btn:active{opacity:.8;}
 .csb-good   {border-color:var(--success-border);color:var(--success-text);background:var(--success-bg);}
 .csb-damaged{border-color:var(--warn-border);   color:var(--warn-text);   background:var(--warn-bg);}
 .csb-missing{border-color:var(--danger-border); color:var(--danger-text); background:var(--danger-bg);}
 .status-icon{font-size:16px;display:block;margin-bottom:3px;}
-.status-sub {font-size:10px;font-family:monospace;display:block;opacity:.75;margin-top:2px;}
-
-/* knife card states */
-.check-knife-card.state-present{border-color:var(--success-border);background:var(--success-bg);}
-.check-knife-card.state-damaged{border-color:var(--warn-border);   background:var(--warn-bg);}
-.check-knife-card.state-missing{border-color:var(--danger-border); background:var(--danger-bg);}
-
-/* ── Plaster log ── */
-.plaster-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;}
-.plaster-card.needs-account{border-left:3px solid var(--warn-border);}
-.plaster-card.accounted-ok {border-left:3px solid var(--success-border);}
-.plaster-card.plaster-missing{border:2px solid var(--danger-border);background:var(--danger-bg);}
-.plaster-card.stood-down{opacity:.7;}
-.plaster-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.plaster-meta{font-size:12px;color:var(--text-muted);margin-top:4px;line-height:1.6;}
-.plaster-type-warn{display:none;color:var(--warn-text);background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius-sm);padding:8px 12px;font-size:13px;margin-top:8px;}
-/* Working toggle */
-.working-btn{flex:1;padding:10px;border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);transition:all .15s;}
-.working-btn.selected-yes{border-color:var(--success-border);background:var(--success-bg);color:var(--success-text);}
-.working-btn.selected-no {border-color:var(--border-strong);background:var(--bg);color:var(--text);}
+.status-sub{font-size:10px;font-family:monospace;display:block;opacity:.75;margin-top:2px;}
+.submit-summary{font-size:13px;font-family:monospace;color:var(--text-muted);text-align:center;margin-bottom:8px;}
 </style>
 </head>
 <body>
 
 <header class="app-header">
-  <div class="app-title">Knife <span>Registry</span></div>
-  <div class="sync-badge" id="sync-status">● sheets</div>
+  <div class="app-title">Knife <span>Check</span></div>
+  <div class="header-right">
+    <div class="sync-badge" id="sync-status">● sheets</div>
+  </div>
 </header>
 
-<div class="tab-bar">
-  <button class="tab active" id="tab-check"    onclick="showTab('check')">🔪 Check</button>
-  <button class="tab"        id="tab-register" onclick="showTab('register')">📋 Register</button>
-  <button class="tab"        id="tab-history"  onclick="showTab('history')">📊 History</button>
-  <button class="tab"        id="tab-settings" onclick="showTab('settings')">⚙ Settings</button>
-</div>
+<div class="content">
 
-<!-- ══ CHECK TAB ══ -->
-<div id="panel-check" class="content">
-
-  <!-- ── STEP 1: Session setup ── -->
+  <!-- STEP 1: Session setup -->
   <div id="check-step1">
     <div class="card">
       <div class="card-label">Session details</div>
@@ -230,12 +107,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
         <select id="c-staff"><option value="">Select staff…</option></select>
       </div>
     </div>
-
-    <div class="err" id="err-check-step1"></div>
-
+    <div class="err" id="err-step1"></div>
     <div style="font-size:11px;font-family:monospace;color:var(--text-muted);letter-spacing:.08em;margin-bottom:10px;margin-top:4px;">SELECT CHECK TYPE</div>
-
-    <button class="session-type-btn opening" onclick="goCheckStep2('opening')">
+    <button class="session-type-btn" onclick="goCheckStep2('opening')">
       <div style="flex:1;min-width:0;">
         <div class="session-type-label">Opening check</div>
         <div class="session-type-sub">Start of production — all knives present?</div>
@@ -243,8 +117,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       </div>
       <div class="session-type-arrow">›</div>
     </button>
-
-    <button class="session-type-btn closing" onclick="goCheckStep2('closing')">
+    <button class="session-type-btn" onclick="goCheckStep2('closing')">
       <div style="flex:1;min-width:0;">
         <div class="session-type-label">Closing check</div>
         <div class="session-type-sub">End of production — all knives returned?</div>
@@ -254,156 +127,32 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     </button>
   </div>
 
-  <!-- ── STEP 2: Knife checklist ── -->
+  <!-- STEP 2: Knife checklist -->
   <div id="check-step2" style="display:none;">
-
-    <!-- Session context bar -->
     <div class="session-ctx-bar">
       <button class="btn-sm" onclick="goCheckStep1()" style="flex-shrink:0;">← Back</button>
       <div style="flex:1;min-width:0;">
-        <div class="ctx-type" id="ctx-type"></div>
-        <div class="ctx-meta" id="ctx-meta"></div>
+        <div style="font-size:15px;font-weight:500;" id="ctx-type"></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;" id="ctx-meta"></div>
       </div>
     </div>
-
     <div class="section-header">
       <span class="section-title">Knife checklist</span>
       <div class="section-line"></div>
       <span id="check-progress" style="font-size:11px;font-family:monospace;color:var(--text-hint);"></span>
     </div>
-
-    <div id="check-no-knives" class="alert alert-warn" style="display:none;">No knives in the register yet — add knives in the Register tab first.</div>
+    <div id="check-no-knives" class="alert-warn" style="display:none;">No knives registered yet — add knives in the Setup page first.</div>
     <div id="check-knife-list"></div>
-
     <div class="card" style="margin-top:4px;">
       <div class="card-label">Notes <span style="font-size:10px;color:var(--text-hint);">optional</span></div>
-      <textarea id="c-notes" placeholder="Any additional observations for this check…"></textarea>
+      <textarea id="c-notes" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);outline:none;resize:vertical;min-height:64px;background:var(--surface);color:var(--text);" placeholder="Any additional observations…"></textarea>
     </div>
-
     <div class="err" id="err-check"></div>
     <div class="submit-summary" id="check-summary"></div>
-    <button class="btn btn-primary" id="check-submit-btn" onclick="submitCheck()">Submit check</button>
-
+    <button class="btn btn-primary" onclick="submitCheck()">Submit check</button>
   </div>
 
 </div>
-
-<!-- ══ REGISTER TAB ══ -->
-<div id="panel-register" class="content" style="display:none;">
-
-  <div class="section-header"><span class="section-title">Active knives</span><div class="section-line"></div><span id="knife-count" style="font-size:11px;font-family:monospace;color:var(--text-hint);"></span></div>
-  <div id="active-knife-list"></div>
-  <div id="no-knives-msg" style="display:none;" class="empty"><div class="empty-icon">🔪</div><div class="empty-title">No knives registered</div><div>Add knives below to begin tracking.</div></div>
-
-  <!-- Add knife form -->
-  <div class="card" style="margin-top:8px;">
-    <div class="card-label">Add knife to register</div>
-    <div class="field-row">
-      <div class="field"><label>Knife ID <span style="font-size:10px;color:var(--text-hint);">e.g. K001</span></label><input type="text" id="n-id" placeholder="K001"/></div>
-      <div class="field"><label>Type</label>
-        <select id="n-type">
-          <option>Chef Knife</option>
-          <option>Paring Knife</option>
-          <option>Bread Knife</option>
-          <option>Boning Knife</option>
-          <option>Filleting Knife</option>
-          <option>Utility Knife</option>
-          <option>Cleaver</option>
-          <option>Other</option>
-        </select>
-      </div>
-    </div>
-    <div class="field"><label>Handle colour <span style="font-size:10px;color:var(--text-hint);">for identification</span></label>
-      <div class="color-picker" id="color-picker"></div>
-      <input type="hidden" id="n-color" value="yellow"/>
-    </div>
-    <div class="field"><label>Description <span style="font-size:10px;color:var(--text-hint);">optional — brand, size</span></label><input type="text" id="n-desc" placeholder="e.g. Victorinox 20cm"/></div>
-    <div class="field"><label>Date acquired</label><input type="date" id="n-acquired"/></div>
-    <div class="err" id="err-add-knife"></div>
-    <button class="btn btn-primary" onclick="addKnife()">Add to register</button>
-  </div>
-
-  <!-- Withdrawn knives -->
-  <div id="withdrawn-section" style="display:none;margin-top:4px;">
-    <div class="section-header" style="margin-top:8px;cursor:pointer;" onclick="toggleWithdrawn()">
-      <span class="section-title">Withdrawn from service</span><div class="section-line"></div>
-      <span id="withdrawn-toggle" style="font-size:11px;font-family:monospace;color:var(--text-hint);">show</span>
-    </div>
-    <div id="withdrawn-knife-list" style="display:none;"></div>
-  </div>
-
-</div>
-
-<!-- ══ HISTORY TAB ══ -->
-<div id="panel-history" class="content" style="display:none;">
-  <div class="card" style="padding:10px 14px;display:flex;gap:8px;align-items:center;">
-    <input type="text" id="history-search" placeholder="Search by staff, date, knife…"
-      oninput="renderHistory()" style="flex:1;border:none;outline:none;font-size:14px;font-family:var(--font);background:transparent;color:var(--text);"/>
-    <span style="font-size:16px;color:var(--text-muted);">⌕</span>
-  </div>
-  <div id="history-container"></div>
-</div>
-
-<!-- ══ SETTINGS TAB ══ -->
-<div id="panel-settings" class="content" style="display:none;">
-  <div class="card">
-    <div class="card-label">Production unit</div>
-    <div class="field"><label>Site / unit name</label><input type="text" id="s-site" placeholder="e.g. Soho Kitchen"/></div>
-    <div class="field"><label>Responsible person <span style="font-size:10px;color:var(--text-hint);">SALSA nominated contact</span></label><input type="text" id="s-responsible" placeholder="e.g. Head Chef"/></div>
-  </div>
-  <div class="card">
-    <div class="card-label">Staff list</div>
-    <div id="staff-list"></div>
-    <div style="display:flex;gap:8px;margin-top:10px;">
-      <input type="text" id="new-staff" placeholder="Staff name" onkeydown="if(event.key==='Enter')addStaff()"
-        style="flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font);outline:none;background:var(--surface);color:var(--text);"/>
-      <button class="btn-sm" style="padding:9px 16px;" onclick="addStaff()">Add</button>
-    </div>
-    <div class="err" id="err-staff"></div>
-  </div>
-  <div class="card">
-    <div class="card-label">Google Sheets sync</div>
-    <div class="field"><label>Apps Script URL</label><input type="text" id="s-script-url" placeholder="https://script.google.com/macros/s/…"/></div>
-    <button class="btn btn-primary" onclick="saveSettings()">Save settings</button>
-  </div>
-  <div class="card">
-    <div class="card-label">Local data</div>
-    <button class="btn btn-secondary" onclick="confirmClearHistory()">Clear check history from this device</button>
-  </div>
-</div>
-
-<!-- Withdraw modal -->
-<div class="modal-overlay" id="withdraw-modal" style="display:none;" onclick="closeWithdrawModal()">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-title"><span>Withdraw knife from service</span><button class="modal-close" onclick="closeWithdrawModal()">×</button></div>
-    <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;" id="withdraw-knife-name"></div>
-    <div class="field"><label>Reason for withdrawal</label>
-      <select id="w-reason">
-        <option value="Damaged beyond repair">Damaged beyond repair</option>
-        <option value="Blade worn">Blade worn / end of life</option>
-        <option value="Lost">Lost / unaccounted for</option>
-        <option value="Replaced">Replaced with new knife</option>
-        <option value="Other">Other</option>
-      </select>
-    </div>
-    <div class="field"><label>Notes</label><textarea id="w-notes" placeholder="Additional details…"></textarea></div>
-    <div class="err" id="err-withdraw"></div>
-    <button class="btn btn-primary" style="background:#c0392b;" onclick="confirmWithdraw()">Withdraw from service</button>
-  </div>
-</div>
-
-<!-- Confirm dialog -->
-<div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:60;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:var(--surface);border-radius:var(--radius);padding:20px;width:100%;max-width:360px;">
-    <div style="font-size:16px;font-weight:500;margin-bottom:8px;" id="confirm-title"></div>
-    <div style="font-size:14px;color:var(--text-muted);margin-bottom:20px;" id="confirm-msg"></div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-secondary" style="flex:1;" onclick="confirmCancel()">Cancel</button>
-      <button class="btn btn-primary" style="flex:1;background:#c0392b;" id="confirm-ok-btn" onclick="confirmOk()">Confirm</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -412,234 +161,60 @@ const SK_CHECKS   = 'knife_checks_v1';
 const SK_SETTINGS = 'knife_settings_v1';
 
 const KNIFE_COLORS = {
-  red:    {label:'Red',    hex:'#d94a3a'},
-  orange: {label:'Orange', hex:'#e07a30'},
-  yellow: {label:'Yellow', hex:'#c9a620'},
-  green:  {label:'Green',  hex:'#4a8c4a'},
-  blue:   {label:'Blue',   hex:'#3a7ab8'},
-  purple: {label:'Purple', hex:'#7a3a9a'},
-  brown:  {label:'Brown',  hex:'#7a4a28'},
-  white:  {label:'White',  hex:'#c8c4bb'},
+  red:    {label:'Red',    hex:'#d94a3a'}, orange:{label:'Orange',hex:'#e07a30'},
+  yellow: {label:'Yellow', hex:'#c9a620'}, green: {label:'Green', hex:'#4a8c4a'},
+  blue:   {label:'Blue',   hex:'#3a7ab8'}, purple:{label:'Purple',hex:'#7a3a9a'},
+  brown:  {label:'Brown',  hex:'#7a4a28'}, white: {label:'White', hex:'#c8c4bb'},
   black:  {label:'Black',  hex:'#3a3935'},
 };
 
-const ISSUE_TYPES = ['Missing','Damaged','Contamination risk','Other'];
-
 let knives   = [];
 let checks   = [];
-let settings = { scriptUrl:'', site:'', responsible:'', staff:[] };
-
-// Per-check state
-let checkType = 'opening';
+let settings = {scriptUrl:'https://script.google.com/macros/s/AKfycbzk8JjxFkesBgvDpwN0akAla-hJBzPvqB7P6SejzcCWpm3w8fyJEzgDqvqe774AKC-kzA/exec', staff:[]};
+let checkType    = 'opening';
 let checkEntries = {};
-let withdrawingId = null;
-let confirmCb    = null;
 
-// ── Boot ──
 function load(){
-  try{const d=localStorage.getItem(SK_KNIVES);  if(d) knives  =JSON.parse(d);}catch(e){}
-  try{const d=localStorage.getItem(SK_CHECKS);  if(d) checks  =JSON.parse(d);}catch(e){}
-  try{const d=localStorage.getItem(SK_SETTINGS);if(d) settings={...settings,...JSON.parse(d)};}catch(e){}
-
+  try{const d=localStorage.getItem(SK_KNIVES);  if(d)knives  =JSON.parse(d);}catch(e){}
+  try{const d=localStorage.getItem(SK_CHECKS);  if(d)checks  =JSON.parse(d);}catch(e){}
+  try{const d=localStorage.getItem(SK_SETTINGS);if(d){const s=JSON.parse(d);settings={...settings,...s};if(!settings.scriptUrl)settings.scriptUrl='https://script.google.com/macros/s/AKfycbzk8JjxFkesBgvDpwN0akAla-hJBzPvqB7P6SejzcCWpm3w8fyJEzgDqvqe774AKC-kzA/exec';}}catch(e){}
   document.getElementById('c-date').valueAsDate=new Date();
-  const now=new Date();
-  document.getElementById('c-time').value=now.toTimeString().slice(0,5);
-  document.getElementById('n-acquired').valueAsDate=new Date();
-
+  document.getElementById('c-time').value=new Date().toTimeString().slice(0,5);
   populateStaffDropdown();
-  renderColorPicker();
-  renderCheckList();
-  renderRegister();
-  loadSettingsForm();
   updateTodayStatus();
   updateSync(settings.scriptUrl?'ready':'local');
 }
 
-function persist(key,data){localStorage.setItem(key,JSON.stringify(data));}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
 function fmtTime(t){return t||'—';}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function updateSync(state){
   const el=document.getElementById('sync-status');
-  if(state==='syncing'){el.textContent='◌ syncing';el.style.color='#8a6500';}
-  else if(state==='synced'){el.textContent='✓ synced';el.style.color='#2d6e2d';}
-  else if(state==='error'){el.textContent='✗ error';el.style.color='#c0392b';}
-  else if(state==='local'){el.textContent='● local only';el.style.color='#b0ada5';}
-  else{el.textContent='● sheets';el.style.color='#2d6e2d';}
-}
-
-// ── Tabs ──
-function showTab(t){
-  ['check','register','history','settings'].forEach(p=>{
-    document.getElementById('panel-'+p).style.display=p===t?'':'none';
-    document.getElementById('tab-'+p).classList.toggle('active',p===t);
-  });
-  if(t==='records')  renderRecords();
-  if(t==='destinations') renderDestList();  
-  if(t==='history')  renderHistory();
-  if(t==='register') renderRegister();
-  if(t==='settings') renderStaffList();
-  if(t==='check')    updateTodayStatus();
-}
-
-// ── Color picker ──
-function renderColorPicker(){
-  const cur=document.getElementById('n-color').value;
-  document.getElementById('color-picker').innerHTML=Object.entries(KNIFE_COLORS).map(([k,v])=>
-    `<div class="color-option${k===cur?' selected':''}" title="${v.label}"
-      style="background:${v.hex};" onclick="selectColor('${k}')"></div>`
-  ).join('');
-}
-function selectColor(k){
-  document.getElementById('n-color').value=k;
-  renderColorPicker();
+  const styles={syncing:['◌ syncing','#8a6500'],synced:['✓ synced','#2d6e2d'],error:['✗ error','#c0392b'],local:['● local only','#b0ada5'],ready:['● sheets','#2d6e2d']};
+  const[text,color]=styles[state]||styles.ready;
+  el.textContent=text;el.style.color=color;
 }
 function colorDot(color,size=14){
   const c=KNIFE_COLORS[color]||KNIFE_COLORS.yellow;
   return`<span class="color-dot" style="width:${size}px;height:${size}px;background:${c.hex};" title="${c.label}"></span>`;
 }
-
-// ── Staff ──
 function populateStaffDropdown(){
   const sel=document.getElementById('c-staff');
   const cur=sel.value;
   sel.innerHTML='<option value="">Select staff…</option>';
   settings.staff.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o);});
-  if(cur) sel.value=cur;
-}
-function renderStaffList(){
-  const c=document.getElementById('staff-list');
-  if(!settings.staff.length){c.innerHTML='<div style="font-size:13px;color:var(--text-muted);padding:4px 0;">No staff added yet.</div>';return;}
-  c.innerHTML=settings.staff.map((s,i)=>`
-    <div class="staff-item">
-      <span style="font-size:14px;">${s}</span>
-      <button class="btn-sm btn-danger-sm" onclick="removeStaff(${i})">✕</button>
-    </div>`).join('');
-}
-function addStaff(){
-  const input=document.getElementById('new-staff');
-  const val=input.value.trim();
-  const err=document.getElementById('err-staff');
-  if(!val){err.style.display='';err.textContent='Enter a name.';return;}
-  if(settings.staff.includes(val)){err.style.display='';err.textContent=`"${val}" already exists.`;return;}
-  err.style.display='none';
-  settings.staff.push(val);settings.staff.sort();
-  persist(SK_SETTINGS,settings);input.value='';
-  populateStaffDropdown();renderStaffList();showToast(val+' added ✓');
-}
-function removeStaff(i){
-  confirmCb=()=>{settings.staff.splice(i,1);persist(SK_SETTINGS,settings);populateStaffDropdown();renderStaffList();showToast('Removed');};
-  showConfirm('Remove staff member?',`Remove "${settings.staff[i]}" from the list?`,'Remove');
+  if(cur)sel.value=cur;
 }
 
-// ── Register ──
-function addKnife(){
-  const id   = document.getElementById('n-id').value.trim().toUpperCase();
-  const type = document.getElementById('n-type').value;
-  const color= document.getElementById('n-color').value;
-  const desc = document.getElementById('n-desc').value.trim();
-  const acq  = document.getElementById('n-acquired').value;
-  const err  = document.getElementById('err-add-knife');
-  if(!id){err.style.display='';err.textContent='Enter a knife ID.';return;}
-  if(knives.some(k=>k.id===id)){err.style.display='';err.textContent=`Knife "${id}" already exists.`;return;}
-  err.style.display='none';
-  knives.push({id,type,color,description:desc,acquired:acq,status:'active',withdrawnDate:null,withdrawnReason:null,withdrawnNotes:null});
-  persist(SK_KNIVES,knives);
-  document.getElementById('n-id').value='';
-  document.getElementById('n-desc').value='';
-  renderRegister();
-  resetCheckEntries();
-  renderCheckList();
-  showToast(`Knife ${id} added ✓`);
-  if(settings.scriptUrl) syncRegister();
-}
-
-function renderRegister(){
-  const active    = knives.filter(k=>k.status==='active');
-  const withdrawn = knives.filter(k=>k.status==='withdrawn');
-  document.getElementById('knife-count').textContent=active.length?`${active.length} knife${active.length!==1?'s':''}`:'' ;
-  const noMsg=document.getElementById('no-knives-msg');
-  const list =document.getElementById('active-knife-list');
-  if(!active.length){noMsg.style.display='';list.innerHTML='';  }
-  else{
-    noMsg.style.display='none';
-    list.innerHTML=active.map(k=>`
-      <div class="knife-item">
-        ${colorDot(k.color,18)}
-        <div class="knife-id">${k.id}</div>
-        <div class="knife-body">
-          <div class="knife-type">${k.type}</div>
-          <div class="knife-desc">${k.description||''}${k.acquired?' · In service from '+fmtDate(k.acquired):''}</div>
-        </div>
-        <span class="badge badge-active">Active</span>
-        <button class="btn-sm btn-danger-sm" onclick="openWithdrawModal('${k.id}')" title="Withdraw">Withdraw</button>
-      </div>`).join('');
-  }
-  // Withdrawn section
-  const wSection=document.getElementById('withdrawn-section');
-  const wList   =document.getElementById('withdrawn-knife-list');
-  if(!withdrawn.length){wSection.style.display='none';return;}
-  wSection.style.display='';
-  wList.innerHTML=withdrawn.map(k=>`
-    <div class="knife-item withdrawn">
-      ${colorDot(k.color,18)}
-      <div class="knife-id">${k.id}</div>
-      <div class="knife-body">
-        <div class="knife-type">${k.type}</div>
-        <div class="knife-desc">${k.withdrawnReason||''}${k.withdrawnDate?' · '+fmtDate(k.withdrawnDate):''}</div>
-      </div>
-      <span class="badge badge-withdrawn">Withdrawn</span>
-    </div>`).join('');
-}
-function toggleWithdrawn(){
-  const list=document.getElementById('withdrawn-knife-list');
-  const tog =document.getElementById('withdrawn-toggle');
-  const open=list.style.display==='none';
-  list.style.display=open?'':'none';
-  tog.textContent=open?'hide':'show';
-}
-
-// ── Withdraw modal ──
-function openWithdrawModal(id){
-  withdrawingId=id;
-  const k=knives.find(x=>x.id===id);
-  document.getElementById('withdraw-knife-name').textContent=`${k.id} — ${k.type}`;
-  document.getElementById('w-reason').value='Damaged beyond repair';
-  document.getElementById('w-notes').value='';
-  document.getElementById('err-withdraw').style.display='none';
-  document.getElementById('withdraw-modal').style.display='flex';
-}
-function closeWithdrawModal(){document.getElementById('withdraw-modal').style.display='none';withdrawingId=null;}
-function confirmWithdraw(){
-  const reason=document.getElementById('w-reason').value;
-  const notes =document.getElementById('w-notes').value.trim();
-  const idx=knives.findIndex(k=>k.id===withdrawingId);
-  if(idx<0)return;
-  knives[idx].status='withdrawn';
-  knives[idx].withdrawnDate=new Date().toISOString().split('T')[0];
-  knives[idx].withdrawnReason=reason;
-  knives[idx].withdrawnNotes=notes;
-  persist(SK_KNIVES,knives);
-  closeWithdrawModal();
-  renderRegister();
-  resetCheckEntries();
-  renderCheckList();
-  showToast(`Knife ${knives[idx].id} withdrawn ✓`);
-  if(settings.scriptUrl) syncRegister();
-}
-
-// ── Check tab ──
 function goCheckStep2(type){
-  const date  = document.getElementById('c-date').value;
-  const time  = document.getElementById('c-time').value;
-  const staff = document.getElementById('c-staff').value;
-  const err   = document.getElementById('err-check-step1');
-  const miss  = [];
-  if(!date)  miss.push('date');
-  if(!time)  miss.push('time');
-  if(!staff) miss.push('staff member');
-  if(miss.length){ err.style.display=''; err.textContent='Please fill in: '+miss.join(', '); return; }
+  const date=document.getElementById('c-date').value;
+  const time=document.getElementById('c-time').value;
+  const staff=document.getElementById('c-staff').value;
+  const err=document.getElementById('err-step1');
+  const miss=[];
+  if(!date)miss.push('date'); if(!time)miss.push('time'); if(!staff)miss.push('staff member');
+  if(miss.length){err.style.display='';err.textContent='Please fill in: '+miss.join(', ');return;}
   err.style.display='none';
   checkType=type;
   document.getElementById('ctx-type').textContent=type==='opening'?'▶ Opening check':'■ Closing check';
@@ -655,75 +230,57 @@ function goCheckStep1(){
   updateTodayStatus();
 }
 function updateTodayStatus(){
-  const today=new Date().toISOString().split('T')[0];
+  const today=new Date().toISOString().slice(0,10);
   ['opening','closing'].forEach(type=>{
-    const el=document.getElementById(type+'-today-status');
-    if(!el) return;
+    const el=document.getElementById(type+'-today-status');if(!el)return;
     const done=checks.find(c=>c.date===today&&c.checkType===type);
     if(done){
       const hasIssues=done.entries&&done.entries.some(e=>e.status!=='present-good');
       const issueNote=hasIssues?` · <span style="color:var(--warn-text);">⚠ issues logged</span>`:'';
-      el.innerHTML=`<span style="font-size:11px;font-family:monospace;display:inline-flex;align-items:center;gap:4px;color:var(--success-text);background:var(--success-bg);border:1px solid var(--success-border);border-radius:20px;padding:2px 9px;">✓ Done · ${done.time} · ${done.staff}</span>${issueNote}`;
-    }else{
-      el.innerHTML='';
-    }
+      el.innerHTML=`<span style="font-size:11px;font-family:monospace;color:var(--success-text);background:var(--success-bg);border:1px solid var(--success-border);border-radius:20px;padding:2px 9px;display:inline-flex;align-items:center;gap:4px;">✓ Done · ${done.time} · ${done.staff}</span>${issueNote}`;
+    }else{el.innerHTML='';}
   });
 }
-
 function resetCheckEntries(){
   checkEntries={};
-  knives.filter(k=>k.status==='active').forEach(k=>{
-    checkEntries[k.id]={status:'unconfirmed',issueType:'',note:'',productionHeld:false};
-  });
+  knives.filter(k=>k.status==='active').forEach(k=>{checkEntries[k.id]={status:'unconfirmed',note:'',productionHeld:false};});
 }
-
 function renderCheckList(){
   const active=knives.filter(k=>k.status==='active');
-  const noMsg =document.getElementById('check-no-knives');
-  const list  =document.getElementById('check-knife-list');
+  const noMsg=document.getElementById('check-no-knives');
+  const list=document.getElementById('check-knife-list');
   if(!active.length){noMsg.style.display='';list.innerHTML='';updateCheckProgress();return;}
   noMsg.style.display='none';
-  if(!Object.keys(checkEntries).length) resetCheckEntries();
+  if(!Object.keys(checkEntries).length)resetCheckEntries();
   list.innerHTML=active.map(k=>buildCheckCard(k)).join('');
   updateCheckProgress();
 }
 function buildCheckCard(k){
   const entry=checkEntries[k.id]||{status:'unconfirmed',note:'',productionHeld:false};
-
   const stateClass=entry.status==='present-good'?'state-present':entry.status==='damaged'?'state-damaged':entry.status==='missing'?'state-missing':'';
-
-  const statusIcon=entry.status==='present-good'?'<span style="color:var(--success-text);font-size:18px;">✓</span>':
-                   entry.status==='damaged'      ?'<span style="color:var(--warn-text);font-size:18px;">⚠</span>':
-                   entry.status==='missing'      ?'<span style="color:var(--danger-text);font-size:18px;">✗</span>':'';
-
-  // Three-button selector (shown when unconfirmed) or undo link (when confirmed)
+  const statusIcon=entry.status==='present-good'?'<span style="color:var(--success-text);font-size:18px;">✓</span>':entry.status==='damaged'?'<span style="color:var(--warn-text);font-size:18px;">⚠</span>':entry.status==='missing'?'<span style="color:var(--danger-text);font-size:18px;">✗</span>':'';
   const actionArea=entry.status==='unconfirmed'
     ?`<div class="check-status-btns">
         <button class="check-status-btn csb-good"    onclick="setPresentGood('${k.id}')"><span class="status-icon">✓</span>Present<span class="status-sub">Good condition</span></button>
         <button class="check-status-btn csb-damaged"  onclick="setDamaged('${k.id}')">  <span class="status-icon">⚠</span>Present<span class="status-sub">Damaged</span></button>
         <button class="check-status-btn csb-missing"  onclick="setMissing('${k.id}')">  <span class="status-icon">✗</span>Missing<span class="status-sub">Not found</span></button>
       </div>`
-    :`<div style="margin-top:10px;"><button class="check-btn check-btn-undo" onclick="undoEntry('${k.id}')">Undo</button></div>`;
-
-  // Detail form for damaged (note) or missing (note + production held)
+    :`<div><button class="check-btn-undo" onclick="undoEntry('${k.id}')">Undo</button></div>`;
   const detailForm=entry.status==='damaged'
-    ?`<div class="issue-form" style="border-top:1px solid var(--warn-border);margin-top:10px;padding-top:10px;">
+    ?`<div class="issue-form" style="border-top:1px solid var(--warn-border);">
         <div style="font-size:11px;font-family:monospace;color:var(--warn-text);margin-bottom:6px;letter-spacing:.04em;">DAMAGE DETAILS</div>
-        <textarea placeholder="Describe the damage…" oninput="setIssueNote('${k.id}',this.value)"
-          style="width:100%;padding:8px 10px;border:1px solid var(--warn-border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);background:var(--surface);color:var(--text);outline:none;resize:vertical;min-height:56px;">${entry.note}</textarea>
+        <textarea placeholder="Describe the damage…" oninput="setIssueNote('${k.id}',this.value)" style="width:100%;padding:8px 10px;border:1px solid var(--warn-border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);background:var(--surface);color:var(--text);outline:none;resize:vertical;min-height:56px;">${entry.note}</textarea>
       </div>`
     :entry.status==='missing'
-    ?`<div class="issue-form" style="border-top:1px solid var(--danger-border);margin-top:10px;padding-top:10px;">
+    ?`<div class="issue-form" style="border-top:1px solid var(--danger-border);">
         <div style="font-size:11px;font-family:monospace;color:var(--danger-text);margin-bottom:6px;letter-spacing:.04em;">MISSING — ACTIONS TAKEN</div>
-        <textarea placeholder="Describe actions taken to locate the knife…" oninput="setIssueNote('${k.id}',this.value)"
-          style="width:100%;padding:8px 10px;border:1px solid var(--danger-border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);background:var(--surface);color:var(--text);outline:none;resize:vertical;min-height:56px;margin-bottom:8px;">${entry.note}</textarea>
+        <textarea placeholder="Describe actions taken to locate the knife…" oninput="setIssueNote('${k.id}',this.value)" style="width:100%;padding:8px 10px;border:1px solid var(--danger-border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);background:var(--surface);color:var(--text);outline:none;resize:vertical;min-height:56px;margin-bottom:8px;">${entry.note}</textarea>
         <div class="production-held-row">
           <input type="checkbox" id="held_${k.id}" ${entry.productionHeld?'checked':''} onchange="setProductionHeld('${k.id}',this.checked)"/>
           <label for="held_${k.id}"><strong>Production held</strong> pending investigation of missing knife</label>
         </div>
       </div>`
     :'';
-
   return`<div class="check-knife-card ${stateClass}" id="card_${k.id}">
     <div class="check-knife-top">
       ${statusIcon?statusIcon+'&nbsp;':''}${colorDot(k.color)}
@@ -741,173 +298,54 @@ function setMissing(id)    {checkEntries[id]={status:'missing',note:'',productio
 function undoEntry(id)     {checkEntries[id]={status:'unconfirmed',note:'',productionHeld:false};    refreshCard(id);updateCheckProgress();}
 function setIssueNote(id,v){checkEntries[id].note=v;}
 function setProductionHeld(id,v){checkEntries[id].productionHeld=v;}
-function refreshCard(id){
-  const k=knives.find(x=>x.id===id);if(!k)return;
-  const card=document.getElementById('card_'+id);if(!card)return;
-  card.outerHTML=buildCheckCard(k);
-}
+function refreshCard(id){const k=knives.find(x=>x.id===id);if(!k)return;const el=document.getElementById('card_'+id);if(el)el.outerHTML=buildCheckCard(k);}
 function updateCheckProgress(){
   const active=knives.filter(k=>k.status==='active');
   const confirmed=active.filter(k=>(checkEntries[k.id]||{}).status!=='unconfirmed');
-  const total=active.length, done=confirmed.length;
+  const total=active.length,done=confirmed.length;
   document.getElementById('check-progress').textContent=total?`${done}/${total}`:'';
   const issues=active.filter(k=>['damaged','missing'].includes((checkEntries[k.id]||{}).status));
   const allGood=total>0&&active.every(k=>(checkEntries[k.id]||{}).status==='present-good');
   const summary=document.getElementById('check-summary');
   if(allGood){summary.textContent=`✓ All ${total} knife${total!==1?'s':''} present & in good condition`;summary.style.color='var(--success-text)';}
   else if(done===total&&issues.length){summary.textContent=`⚠ ${issues.length} issue${issues.length!==1?'s':''} recorded — all confirmed`;summary.style.color='var(--warn-text)';}
-  else if(!total){summary.textContent='Add knives to the register first';summary.style.color='var(--text-hint)';}
+  else if(!total){summary.textContent='Add knives in the Setup page first';summary.style.color='var(--text-hint)';}
   else{summary.textContent=`${total-done} knife${total-done!==1?'s':''} remaining`;summary.style.color='var(--text-hint)';}
 }
-
-// ── Submit check ──
 async function submitCheck(){
-  const date  =document.getElementById('c-date').value;
-  const time  =document.getElementById('c-time').value;
-  const staff =document.getElementById('c-staff').value;
-  const notes =document.getElementById('c-notes').value.trim();
-  const err   =document.getElementById('err-check');
+  const date=document.getElementById('c-date').value;
+  const time=document.getElementById('c-time').value;
+  const staff=document.getElementById('c-staff').value;
+  const notes=document.getElementById('c-notes').value.trim();
+  const err=document.getElementById('err-check');
   const active=knives.filter(k=>k.status==='active');
-  const missing=[];
-  if(!date) missing.push('date');
-  if(!time) missing.push('time');
-  if(!staff)missing.push('staff member');
-  if(missing.length){err.style.display='';err.textContent='Please fill in: '+missing.join(', ');return;}
+  const miss=[];
+  if(!date)miss.push('date'); if(!time)miss.push('time'); if(!staff)miss.push('staff member');
+  if(miss.length){err.style.display='';err.textContent='Please fill in: '+miss.join(', ');return;}
   const unconfirmed=active.filter(k=>(checkEntries[k.id]||{}).status==='unconfirmed');
-  if(unconfirmed.length){
-    err.style.display='';
-    err.textContent=`Please confirm all knives. Remaining: ${unconfirmed.map(k=>k.id).join(', ')}`;
-    return;
-  }
+  if(unconfirmed.length){err.style.display='';err.textContent='Please confirm all knives. Remaining: '+unconfirmed.map(k=>k.id).join(', ');return;}
   err.style.display='none';
-  const entries=active.map(k=>{
-    const e=checkEntries[k.id];
-    return{
-      knifeId:k.id,
-      status:e.status,
-      issueType:e.status==='damaged'?'Damaged':e.status==='missing'?'Missing':'',
-      note:e.note||'',
-      productionHeld:e.productionHeld||false
-    };
-  });
+  const entries=active.map(k=>({knifeId:k.id,...checkEntries[k.id],issueType:checkEntries[k.id].status==='damaged'?'Damaged':checkEntries[k.id].status==='missing'?'Missing':''}));
   const allPresent=entries.every(e=>e.status!=='missing');
   const allGoodCondition=entries.every(e=>e.status==='present-good');
   const productionHeld=entries.some(e=>e.productionHeld);
-  const check={
-    id:uid(),date,time,
-    checkType,staff,
-    site:settings.site||'',
-    entries,allPresent,allGoodCondition,productionHeld,notes,
-    savedAt:new Date().toISOString()
-  };
+  const check={id:uid(),date,time,checkType,staff,site:settings.site||'',entries,allPresent,allGoodCondition,productionHeld,notes,savedAt:new Date().toISOString()};
   checks.unshift(check);
-  persist(SK_CHECKS,checks);
-  const typeLabel=checkType==='opening'?'Opening':'Closing';
-  showToast(`${typeLabel} check saved ✓`);
-  // Return to step 1 for next check
+  localStorage.setItem(SK_CHECKS,JSON.stringify(checks));
+  showToast((checkType==='opening'?'Opening':'Closing')+' check saved ✓');
   document.getElementById('c-notes').value='';
   document.getElementById('c-time').value=new Date().toTimeString().slice(0,5);
   resetCheckEntries();
   goCheckStep1();
-  // Sync
   if(settings.scriptUrl){
     updateSync('syncing');
     try{
-      const payload={action:'mergeKnifeCheck',check,knives:knives.filter(k=>k.status==='active')};
-      const res=await fetch(settings.scriptUrl,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'}});
+      const res=await fetch(settings.scriptUrl,{method:'POST',body:JSON.stringify({action:'mergeKnifeCheck',check,knives:knives.filter(k=>k.status==='active')}),headers:{'Content-Type':'text/plain'}});
       const j=await res.json();
       updateSync(j.result==='success'?'synced':'error');
       setTimeout(()=>updateSync('ready'),4000);
     }catch(e){updateSync('error');setTimeout(()=>updateSync(settings.scriptUrl?'ready':'local'),4000);}
   }
-}
-
-// ── History ──
-function renderHistory(){
-  const q=(document.getElementById('history-search').value||'').toLowerCase();
-  const c=document.getElementById('history-container');
-  const filtered=checks.filter(ch=>!q||[ch.staff,ch.date,ch.site,ch.checkType,...(ch.entries||[]).map(e=>e.knifeId)].some(v=>v&&v.toLowerCase().includes(q)));
-  if(!filtered.length){
-    c.innerHTML=checks.length
-      ?'<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No results</div></div>'
-      :'<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No checks recorded yet</div><div>Complete a check to see it here.</div></div>';
-    return;
-  }
-  c.innerHTML=filtered.map(ch=>{
-    const typeLabel=ch.checkType==='opening'?'Opening':'Closing';
-    const issues=(ch.entries||[]).filter(e=>e.status==='issue');
-    const passEl=ch.allPresent
-      ?`<div class="rec-pass rec-pass-ok">✓</div>`
-      :`<div class="rec-pass rec-pass-fail">⚠</div>`;
-    const issueSummary=issues.length?`<div style="font-size:11px;color:var(--danger-text);margin-top:3px;">⚠ ${issues.map(e=>e.knifeId+': '+e.issueType).join('; ')}</div>`:'';
-    const heldBadge=ch.productionHeld?'<span style="font-size:10px;font-family:monospace;background:var(--warn-bg);color:var(--warn-text);border:1px solid var(--warn-border);border-radius:20px;padding:2px 8px;margin-left:6px;">HELD</span>':'';
-    const detailRows=(ch.entries||[]).map(e=>{
-      const k=knives.find(x=>x.id===e.knifeId);
-      const kLabel=k?`${colorDot(k.color)} ${e.knifeId} — ${k.type}`:e.knifeId;
-      if(e.status==='present-good') return`<div class="rec-detail-row">${kLabel}<span style="margin-left:auto;color:var(--success-text);font-size:12px;font-family:monospace;">✓ Present &amp; Good</span></div>`;
-      if(e.status==='damaged')      return`<div class="rec-detail-row">${kLabel}<span style="margin-left:auto;color:var(--warn-text);font-size:12px;font-family:monospace;">⚠ Damaged</span></div>${e.note?`<div style="font-size:12px;color:var(--text-muted);padding:2px 0 4px 20px;">${e.note}</div>`:''}`;
-      if(e.status==='missing')      return`<div class="rec-detail-row">${kLabel}<span style="margin-left:auto;color:var(--danger-text);font-size:12px;font-family:monospace;">✗ Missing${e.productionHeld?' · HELD':''}</span></div>${e.note?`<div style="font-size:12px;color:var(--text-muted);padding:2px 0 4px 20px;">${e.note}</div>`:''}`;
-      // legacy fallback
-      return`<div class="rec-detail-row">${kLabel}<span style="margin-left:auto;color:var(--success-text);font-size:12px;font-family:monospace;">✓ Present</span></div>`;
-    }).join('');
-    return`<div class="rec">
-      <div class="rec-header" onclick="toggleRecDetail('${ch.id}')">
-        ${passEl}
-        <div class="rec-body">
-          <div class="rec-title">${typeLabel}${heldBadge}</div>
-          <div class="rec-meta">${fmtDate(ch.date)} ${fmtTime(ch.time)} · ${ch.staff}${ch.site?' · '+ch.site:''}</div>
-          ${issueSummary}
-        </div>
-        <span style="color:var(--text-hint);font-size:18px;" id="chevron_${ch.id}">›</span>
-      </div>
-      <div class="rec-detail" id="detail_${ch.id}">
-        ${detailRows}
-        ${ch.notes?`<div style="font-size:13px;color:var(--text-muted);padding:8px 0 2px;border-top:1px solid var(--border);margin-top:4px;">Notes: ${ch.notes}</div>`:''}
-      </div>
-    </div>`;
-  }).join('');
-}
-function toggleRecDetail(id){
-  const d=document.getElementById('detail_'+id);
-  const c=document.getElementById('chevron_'+id);
-  const open=d.classList.toggle('open');
-  c.style.transform=open?'rotate(90deg)':'';
-}
-
-// ── Settings ──
-function loadSettingsForm(){
-  document.getElementById('s-script-url').value=settings.scriptUrl||'';
-  document.getElementById('s-site').value=settings.site||'';
-  document.getElementById('s-responsible').value=settings.responsible||'';
-}
-function saveSettings(){
-  settings.scriptUrl  =document.getElementById('s-script-url').value.trim();
-  settings.site       =document.getElementById('s-site').value.trim();
-  settings.responsible=document.getElementById('s-responsible').value.trim();
-  persist(SK_SETTINGS,settings);
-  updateSync(settings.scriptUrl?'ready':'local');
-  showToast('Settings saved ✓');
-  renderStaffList();
-}
-async function syncRegister(){
-  if(!settings.scriptUrl)return;
-  try{
-    await fetch(settings.scriptUrl,{method:'POST',body:JSON.stringify({action:'saveKnifeRegister',knives}),headers:{'Content-Type':'text/plain'}});
-  }catch(e){}
-}
-
-// ── Confirm ──
-function showConfirm(title,msg,okLabel='Confirm'){
-  document.getElementById('confirm-title').textContent=title;
-  document.getElementById('confirm-msg').textContent=msg;
-  document.getElementById('confirm-ok-btn').textContent=okLabel;
-  document.getElementById('confirm-overlay').style.display='flex';
-}
-function confirmOk(){document.getElementById('confirm-overlay').style.display='none';if(confirmCb)confirmCb();confirmCb=null;}
-function confirmCancel(){document.getElementById('confirm-overlay').style.display='none';confirmCb=null;}
-function confirmClearHistory(){
-  confirmCb=()=>{checks=[];persist(SK_CHECKS,checks);renderHistory();showToast('History cleared');};
-  showConfirm('Clear check history?','This removes all check records from this device only. Data already in Sheets is not affected.','Clear');
 }
 
 load();
