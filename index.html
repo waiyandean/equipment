@@ -272,10 +272,12 @@ function buildCheckCard(k){
   const stateClass=entry.status==='present-good'?'state-present':entry.status==='damaged'?'state-damaged':entry.status==='missing'?'state-missing':'';
   const statusIcon=entry.status==='present-good'?'<span style="color:var(--success-text);font-size:18px;">✓</span>':entry.status==='damaged'?'<span style="color:var(--warn-text);font-size:18px;">⚠</span>':entry.status==='missing'?'<span style="color:var(--danger-text);font-size:18px;">✗</span>':'';
   const actionArea=entry.status==='unconfirmed'
-    ?`<div class="check-status-btns">
-        <button class="check-status-btn csb-good"    onclick="setPresentGood('${k.id}')"><span class="status-icon">✓</span>Present<span class="status-sub">Good condition</span></button>
-        <button class="check-status-btn csb-damaged"  onclick="setDamaged('${k.id}')">  <span class="status-icon">⚠</span>Present<span class="status-sub">Damaged</span></button>
-        <button class="check-status-btn csb-missing"  onclick="setMissing('${k.id}')">  <span class="status-icon">✗</span>Missing<span class="status-sub">Not found</span></button>
+    ?`<div style="margin-top:12px;">
+        <button class="check-status-btn csb-good" style="width:100%;margin-bottom:6px;" onclick="setPresentGood('${k.id}')"><span class="status-icon">✓</span>Present &amp; Good condition</button>
+        <div style="display:flex;gap:6px;">
+          <button class="check-status-btn csb-damaged" style="flex:1;" onclick="setDamaged('${k.id}')"><span class="status-icon">⚠</span>Present<span class="status-sub">Damaged</span></button>
+          <button class="check-status-btn csb-missing"  style="flex:1;" onclick="setMissing('${k.id}')"> <span class="status-icon">✗</span>Missing<span class="status-sub">Not found</span></button>
+        </div>
       </div>`
     :`<div><button class="check-btn-undo" onclick="undoEntry('${k.id}')">Undo</button></div>`;
   const detailForm=entry.status==='damaged'
