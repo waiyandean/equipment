@@ -229,14 +229,14 @@ const KNIFE_COLORS = {
 
 let knives   = [];
 let checks   = [];
-let settings = {scriptUrl:'https://script.google.com/macros/s/AKfycbzk8JjxFkesBgvDpwN0akAla-hJBzPvqB7P6SejzcCWpm3w8fyJEzgDqvqe774AKC-kzA/exec', site:'', responsible:'', staff:[]};
+let settings = {scriptUrl:'https://script.google.com/macros/s/AKfycbwPfSnYsJbQpsa6sRIwyGKGsn7NwxAiCUfsl1xqMhd7suuYRgfzN43C2zBhxQ4mhiFMMg/exec', site:'', responsible:'', staff:[]};
 let withdrawingId = null;
 let confirmCb     = null;
 
 function load(){
   try{const d=localStorage.getItem(SK_KNIVES);  if(d)knives  =JSON.parse(d);}catch(e){}
   try{const d=localStorage.getItem(SK_CHECKS);  if(d)checks  =JSON.parse(d);}catch(e){}
-  try{const d=localStorage.getItem(SK_SETTINGS);if(d){const s=JSON.parse(d);settings={...settings,...s};if(!settings.scriptUrl)settings.scriptUrl='https://script.google.com/macros/s/AKfycbzk8JjxFkesBgvDpwN0akAla-hJBzPvqB7P6SejzcCWpm3w8fyJEzgDqvqe774AKC-kzA/exec';}}catch(e){}
+  try{const d=localStorage.getItem(SK_SETTINGS);if(d){const s=JSON.parse(d);settings={...settings,...s};if(!settings.scriptUrl)settings.scriptUrl='https://script.google.com/macros/s/AKfycbwPfSnYsJbQpsa6sRIwyGKGsn7NwxAiCUfsl1xqMhd7suuYRgfzN43C2zBhxQ4mhiFMMg/exec';}}catch(e){}
   document.getElementById('n-acquired').valueAsDate=new Date();
   renderColorPicker();
   renderRegister();
