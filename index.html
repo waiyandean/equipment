@@ -441,17 +441,14 @@ function load(){
   try{const d=localStorage.getItem(SK_SETTINGS);if(d) settings={...settings,...JSON.parse(d)};}catch(e){}
 
   document.getElementById('c-date').valueAsDate=new Date();
-  document.getElementById('p-date').valueAsDate=new Date();
   const now=new Date();
   document.getElementById('c-time').value=now.toTimeString().slice(0,5);
-  document.getElementById('p-time').value=now.toTimeString().slice(0,5);
   document.getElementById('n-acquired').valueAsDate=new Date();
 
   populateStaffDropdown();
   renderColorPicker();
   renderCheckList();
   renderRegister();
-  renderPlasterLog();
   loadSettingsForm();
   updateTodayStatus();
   updateSync(settings.scriptUrl?'ready':'local');
@@ -910,38 +907,6 @@ function confirmCancel(){document.getElementById('confirm-overlay').style.displa
 function confirmClearHistory(){
   confirmCb=()=>{checks=[];persist(SK_CHECKS,checks);renderHistory();showToast('History cleared');};
   showConfirm('Clear check history?','This removes all check records from this device only. Data already in Sheets is not affected.','Clear');
-}
-
-function onAccountStatusChange(){
-  document.getElementById('account-missing-warn').style.display=
-    document.getElementById('account-status').value==='missing'?'block':'none';
-}
-async function submitAccountFor(){
-  const status=document.getElementById('account-status').value;
-  const by    =document.getElementById('account-by').value;
-  const notes =document.getElementById('account-notes').value.trim();
-  const err   =document.getElementById('err-account');
-  if(!by){err.style.display='';err.textContent='Please select who is confirming this.';return;}
-  err.style.display='none';
-  const idx=plasters.findIndex(p=>p.id===accountingId);
-  if(idx<0)return;
-  plasters[idx].accounted      =true;
-  plasters[idx].accountedAt    =new Date().toISOString();
-  plasters[idx].accountedBy    =by;
-  plasters[idx].accountedStatus=status;
-  plasters[idx].accountedNotes =notes;
-  renderPlasterLog();
-  showToast(status==='missing'?'⚠ Incident recorded':'Plaster accounted for ✓');
-  if(settings.scriptUrl){
-    updateSync('syncing');
-    try{
-      const payload={action:'updatePlasterAccount',id:plasters[idx].id,accountedAt:plasters[idx].accountedAt,accountedBy:by,accountedStatus:status,accountedNotes:notes};
-      const res=await fetch(settings.scriptUrl,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'}});
-      const j=await res.json();
-      updateSync(j.result==='success'?'synced':'error');
-      setTimeout(()=>updateSync('ready'),3000);
-    }catch(e){updateSync('error');setTimeout(()=>updateSync(settings.scriptUrl?'ready':'local'),3000);}
-  }
 }
 
 load();
