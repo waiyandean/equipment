@@ -170,21 +170,41 @@ const KNIFE_COLORS = {
 
 let knives   = [];
 let checks   = [];
-let settings = {scriptUrl:'https://script.google.com/macros/s/AKfycbzk8JjxFkesBgvDpwN0akAla-hJBzPvqB7P6SejzcCWpm3w8fyJEzgDqvqe774AKC-kzA/exec', staff:[]};
+let settings = {scriptUrl:'https://script.google.com/macros/s/AKfycbwPfSnYsJbQpsa6sRIwyGKGsn7NwxAiCUfsl1xqMhd7suuYRgfzN43C2zBhxQ4mhiFMMg/exec', staff:[]};
 let checkType    = 'opening';
 let checkEntries = {};
 
-function load(){
+async function load(){
   try{const d=localStorage.getItem(SK_KNIVES);  if(d)knives  =JSON.parse(d);}catch(e){}
   try{const d=localStorage.getItem(SK_CHECKS);  if(d)checks  =JSON.parse(d);}catch(e){}
-  try{const d=localStorage.getItem(SK_SETTINGS);if(d){const s=JSON.parse(d);settings={...settings,...s};if(!settings.scriptUrl)settings.scriptUrl='https://script.google.com/macros/s/AKfycbzk8JjxFkesBgvDpwN0akAla-hJBzPvqB7P6SejzcCWpm3w8fyJEzgDqvqe774AKC-kzA/exec';}}catch(e){}
+  try{const d=localStorage.getItem(SK_SETTINGS);if(d){const s=JSON.parse(d);settings={...settings,...s};if(!settings.scriptUrl)settings.scriptUrl='https://script.google.com/macros/s/AKfycbwPfSnYsJbQpsa6sRIwyGKGsn7NwxAiCUfsl1xqMhd7suuYRgfzN43C2zBhxQ4mhiFMMg/exec';}}catch(e){}
   document.getElementById('c-date').valueAsDate=new Date();
   document.getElementById('c-time').value=new Date().toTimeString().slice(0,5);
   updateTodayStatus();
   updateSync(settings.scriptUrl?'ready':'local');
+  // Always fetch the latest knife register from Sheets so all devices stay in sync
+  if(settings.scriptUrl) await fetchKnivesFromSheet();
 }
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+
+async function fetchKnivesFromSheet(){
+  updateSync('syncing');
+  try{
+    const res=await fetch(settings.scriptUrl+'?action=getKnifeRegister');
+    const j=await res.json();
+    if(j.result==='success'&&Array.isArray(j.knives)&&j.knives.length){
+      knives=j.knives;
+      localStorage.setItem(SK_KNIVES,JSON.stringify(knives));
+      renderCheckList();
+      updateTodayStatus();
+    }
+    updateSync('ready');
+  }catch(e){
+    updateSync(knives.length?'ready':'error');
+    if(!knives.length) setTimeout(()=>updateSync('local'),3000);
+  }
+}
 function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
 function fmtTime(t){return t||'—';}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
