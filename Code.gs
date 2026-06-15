@@ -84,29 +84,35 @@ function getTodayCheckStatus(dateStr) {
   if (rowNum < 0) return { result: 'success', opening: null, closing: null };
 
   const row = sheet.getRange(rowNum, 1, 1, headerCount).getValues()[0];
+  const tz  = Session.getScriptTimeZone();
+
   function val(name) {
     const idx = headers.indexOf(name);
-    return idx >= 0 ? String(row[idx] || '') : '';
+    return idx >= 0 ? row[idx] : '';
+  }
+  function strVal(name) {
+    const v = val(name);
+    return v instanceof Date ? Utilities.formatDate(v, tz, 'HH:mm') : String(v || '');
   }
 
-  const openTime  = val('Opening Time');
-  const closeTime = val('Closing Time');
+  const openTime  = strVal('Opening Time');
+  const closeTime = strVal('Closing Time');
 
   return {
     result: 'success',
     opening: openTime ? {
       done:             true,
       time:             openTime,
-      staff:            val('Opening Staff'),
-      allPresent:       val('Opening All Present').startsWith('✓'),
-      allGoodCondition: val('Opening All Good Condition').startsWith('✓')
+      staff:            strVal('Opening Staff'),
+      allPresent:       strVal('Opening All Present').startsWith('✓'),
+      allGoodCondition: strVal('Opening All Good Condition').startsWith('✓')
     } : null,
     closing: closeTime ? {
       done:             true,
       time:             closeTime,
-      staff:            val('Closing Staff'),
-      allPresent:       val('Closing All Present').startsWith('✓'),
-      allGoodCondition: val('Closing All Good Condition').startsWith('✓')
+      staff:            strVal('Closing Staff'),
+      allPresent:       strVal('Closing All Present').startsWith('✓'),
+      allGoodCondition: strVal('Closing All Good Condition').startsWith('✓')
     } : null
   };
 }

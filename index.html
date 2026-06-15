@@ -268,8 +268,11 @@ async function updateTodayStatus(){
       if(done){isDone=true;time=done.time;staff=done.staff;hasIssues=done.entries&&done.entries.some(e=>e.status!=='present-good');}
     }
     if(isDone){
+      const [y,mo,d]=today.split('-');
+      const dayName=new Date(today+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short'});
+      const dateLabel=`${dayName} ${d}/${mo}/${y}`;
       const issueNote=hasIssues?` · <span style="color:var(--warn-text);">⚠ issues logged</span>`:'';
-      el.innerHTML=`<span style="font-size:11px;font-family:monospace;color:var(--success-text);background:var(--success-bg);border:1px solid var(--success-border);border-radius:20px;padding:2px 9px;display:inline-flex;align-items:center;gap:4px;">✓ Done · ${time} · ${staff}</span>${issueNote}`;
+      el.innerHTML=`<span style="font-size:11px;font-family:monospace;color:var(--success-text);background:var(--success-bg);border:1px solid var(--success-border);border-radius:20px;padding:2px 9px;display:inline-flex;align-items:center;gap:4px;">✓ Done · ${dateLabel} · ${time} · ${staff}</span>${issueNote}`;
     }else{el.innerHTML='';}
   });
 }
