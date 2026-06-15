@@ -176,20 +176,20 @@ const KNIFE_COLORS = {
 
 let knives   = [];
 let checks   = [];
-let settings = {scriptUrl:'https://script.google.com/macros/s/AKfycbwPfSnYsJbQpsa6sRIwyGKGsn7NwxAiCUfsl1xqMhd7suuYRgfzN43C2zBhxQ4mhiFMMg/exec', staff:[]};
+let settings = {scriptUrl:'https://script.google.com/macros/s/AKfycby-LZG2TOJUPxoqI21vBOn12UtdjvwxtaGnsSc2YX62EP_gItEmewvAdDhIosxDsMRyxA/exec', staff:[]};
 let checkType    = 'opening';
 let checkEntries = {};
 
 async function load(){
   try{const d=localStorage.getItem(SK_KNIVES);  if(d)knives  =JSON.parse(d);}catch(e){}
   try{const d=localStorage.getItem(SK_CHECKS);  if(d)checks  =JSON.parse(d);}catch(e){}
-  try{const d=localStorage.getItem(SK_SETTINGS);if(d){const s=JSON.parse(d);settings={...settings,...s};if(!settings.scriptUrl)settings.scriptUrl='https://script.google.com/macros/s/AKfycbwPfSnYsJbQpsa6sRIwyGKGsn7NwxAiCUfsl1xqMhd7suuYRgfzN43C2zBhxQ4mhiFMMg/exec';}}catch(e){}
+  try{const d=localStorage.getItem(SK_SETTINGS);if(d){const s=JSON.parse(d);settings={...settings,...s};if(!settings.scriptUrl)settings.scriptUrl='https://script.google.com/macros/s/AKfycby-LZG2TOJUPxoqI21vBOn12UtdjvwxtaGnsSc2YX62EP_gItEmewvAdDhIosxDsMRyxA/exec';}}catch(e){}
   document.getElementById('c-date').valueAsDate=new Date();
   document.getElementById('c-time').value=new Date().toTimeString().slice(0,5);
-  updateTodayStatus();
   updateSync(settings.scriptUrl?'ready':'local');
   // Always fetch the latest knife register from Sheets so all devices stay in sync
   if(settings.scriptUrl) await fetchKnivesFromSheet();
+  await updateTodayStatus();
 }
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
@@ -245,17 +245,31 @@ function goCheckStep2(type){
 function goCheckStep1(){
   document.getElementById('check-step1').style.display='';
   document.getElementById('check-step2').style.display='none';
-  updateTodayStatus();
+  updateTodayStatus(); // async, fires and updates UI when ready
 }
-function updateTodayStatus(){
+async function updateTodayStatus(){
   const today=new Date().toISOString().slice(0,10);
+  let sheetStatus=null;
+  if(settings.scriptUrl){
+    try{
+      const res=await fetch(settings.scriptUrl+'?action=getTodayCheckStatus&date='+today);
+      const j=await res.json();
+      if(j.result==='success')sheetStatus=j;
+    }catch(e){}
+  }
   ['opening','closing'].forEach(type=>{
     const el=document.getElementById(type+'-today-status');if(!el)return;
-    const done=checks.find(c=>c.date===today&&c.checkType===type);
-    if(done){
-      const hasIssues=done.entries&&done.entries.some(e=>e.status!=='present-good');
+    let time='',staff='',hasIssues=false,isDone=false;
+    if(sheetStatus){
+      const s=sheetStatus[type];
+      if(s&&s.done){isDone=true;time=s.time;staff=s.staff;hasIssues=!s.allPresent||!s.allGoodCondition;}
+    }else{
+      const done=checks.find(c=>c.date===today&&c.checkType===type);
+      if(done){isDone=true;time=done.time;staff=done.staff;hasIssues=done.entries&&done.entries.some(e=>e.status!=='present-good');}
+    }
+    if(isDone){
       const issueNote=hasIssues?` · <span style="color:var(--warn-text);">⚠ issues logged</span>`:'';
-      el.innerHTML=`<span style="font-size:11px;font-family:monospace;color:var(--success-text);background:var(--success-bg);border:1px solid var(--success-border);border-radius:20px;padding:2px 9px;display:inline-flex;align-items:center;gap:4px;">✓ Done · ${done.time} · ${done.staff}</span>${issueNote}`;
+      el.innerHTML=`<span style="font-size:11px;font-family:monospace;color:var(--success-text);background:var(--success-bg);border:1px solid var(--success-border);border-radius:20px;padding:2px 9px;display:inline-flex;align-items:center;gap:4px;">✓ Done · ${time} · ${staff}</span>${issueNote}`;
     }else{el.innerHTML='';}
   });
 }
