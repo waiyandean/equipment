@@ -33,6 +33,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .app-title span{color:var(--text-muted);}
 .header-right{display:flex;align-items:center;gap:10px;}
 .sync-badge{font-size:12px;font-family:monospace;background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:20px;padding:3px 10px;color:var(--text-muted);}
+.back-link{font-size:12px;font-family:monospace;background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:20px;padding:3px 10px;color:var(--text-muted);text-decoration:none;}
 .content{padding:16px;max-width:640px;margin:0 auto;}
 .card{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,0.8);border-radius:var(--radius);box-shadow:0 4px 20px rgba(26,25,22,0.06),inset 0 1px 0 rgba(255,255,255,0.9);padding:16px;margin-bottom:12px;}
 .card-label{font-size:11px;font-family:monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
@@ -48,6 +49,7 @@ input[type="date"]::-webkit-calendar-picker-indicator,input[type="time"]::-webki
 .btn{width:100%;padding:13px;border-radius:var(--radius-sm);font-size:15px;font-family:var(--font);cursor:pointer;border:none;transition:opacity .15s;}
 .btn-primary{background:rgba(26,25,22,0.72);color:#fff;backdrop-filter:blur(20px) saturate(1.8);-webkit-backdrop-filter:blur(20px) saturate(1.8);border:1px solid rgba(255,255,255,0.14);box-shadow:0 4px 20px rgba(26,25,22,0.22),inset 0 1px 0 rgba(255,255,255,0.12),inset 0 -1px 0 rgba(0,0,0,0.15);}
 .btn-primary:active{opacity:.82;}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;}
 .btn-sm{font-size:12px;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--border);background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--text-muted);font-family:var(--font);}
 .btn-sm:active{background:var(--glass-mid);}
 .section-header{display:flex;align-items:center;gap:10px;margin:4px 0 10px;}
@@ -103,6 +105,7 @@ input[type="date"]::-webkit-calendar-picker-indicator,input[type="time"]::-webki
     <div class="app-title">Knife <span>Check</span></div>
   </div>
   <div class="header-right">
+    <a href="https://waiyandean.github.io/home/" class="back-link">← Home</a>
     <div class="sync-badge" id="sync-status">● sheets</div>
   </div>
 </header>
@@ -123,6 +126,7 @@ input[type="date"]::-webkit-calendar-picker-indicator,input[type="time"]::-webki
       </div>
     </div>
     <div class="err" id="err-step1"></div>
+    <div class="alert-warn" id="warn-step1" style="display:none;"></div>
     <div style="font-size:11px;font-family:monospace;color:var(--text-muted);letter-spacing:.08em;margin-bottom:10px;margin-top:4px;">SELECT CHECK TYPE</div>
     <button class="session-type-btn" onclick="goCheckStep2('opening')">
       <div style="flex:1;min-width:0;">
@@ -156,7 +160,7 @@ input[type="date"]::-webkit-calendar-picker-indicator,input[type="time"]::-webki
       <div class="section-line"></div>
       <span id="check-progress" style="font-size:11px;font-family:monospace;color:var(--text-hint);"></span>
     </div>
-    <div id="check-no-knives" class="alert-warn" style="display:none;">No knives registered yet — add knives in the Setup page first.</div>
+    <div id="check-no-knives" class="alert-warn" style="display:none;">No knives registered yet — <a href="setup.html" style="color:var(--warn-text);font-weight:500;">open Setup</a> to add knives first.</div>
     <div id="check-knife-list"></div>
     <div class="card" style="margin-top:4px;">
       <div class="card-label">Notes <span style="font-size:10px;color:var(--text-hint);">optional</span></div>
@@ -188,6 +192,8 @@ let checks   = [];
 let settings = {scriptUrl:'https://script.google.com/macros/s/AKfycbxNfBH1bw_5A8YzKolV-vzxHuUuJKL8A3eSCZfSyKf2vArVkyu4tDisNy6ZVO2mv9XxZw/exec', staff:[]};
 let checkType    = 'opening';
 let checkEntries = {};
+let todayDone    = {opening:false,closing:false};
+let duplicateAck = {opening:false,closing:false};
 
 async function load(){
   try{const d=localStorage.getItem(SK_KNIVES);  if(d)knives  =JSON.parse(d);}catch(e){}
@@ -239,10 +245,19 @@ function goCheckStep2(type){
   const time=document.getElementById('c-time').value;
   const staff=document.getElementById('c-staff').value;
   const err=document.getElementById('err-step1');
+  const warn=document.getElementById('warn-step1');
   const miss=[];
   if(!date)miss.push('date'); if(!time)miss.push('time'); if(!staff)miss.push('staff member');
-  if(miss.length){err.style.display='';err.textContent='Please fill in: '+miss.join(', ');return;}
+  if(miss.length){warn.style.display='none';err.style.display='';err.textContent='Please fill in: '+miss.join(', ');return;}
   err.style.display='none';
+  if(todayDone[type]&&!duplicateAck[type]){
+    duplicateAck[type]=true;
+    warn.style.display='';
+    warn.textContent=`A ${type} check was already submitted today. Tap ${type==='opening'?'Opening':'Closing'} check again to record another.`;
+    return;
+  }
+  duplicateAck[type]=false;
+  warn.style.display='none';
   checkType=type;
   document.getElementById('ctx-type').textContent=type==='opening'?'▶ Opening check':'■ Closing check';
   document.getElementById('ctx-meta').textContent=fmtDate(date)+' · '+time+' · '+staff;
@@ -254,6 +269,8 @@ function goCheckStep2(type){
 function goCheckStep1(){
   document.getElementById('check-step1').style.display='';
   document.getElementById('check-step2').style.display='none';
+  duplicateAck={opening:false,closing:false};
+  document.getElementById('warn-step1').style.display='none';
   updateTodayStatus(); // async, fires and updates UI when ready
 }
 async function updateTodayStatus(){
@@ -276,6 +293,7 @@ async function updateTodayStatus(){
       const done=checks.find(c=>c.date===today&&c.checkType===type);
       if(done){isDone=true;time=done.time;staff=done.staff;hasIssues=done.entries&&done.entries.some(e=>e.status!=='present-good');}
     }
+    todayDone[type]=isDone;
     if(isDone){
       const [y,mo,d]=today.split('-');
       const dayName=new Date(today+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short'});
@@ -340,7 +358,7 @@ function buildCheckCard(k){
 }
 function setPresentGood(id){checkEntries[id]={status:'present-good',note:'',productionHeld:false};refreshCard(id);updateCheckProgress();}
 function setDamaged(id)    {checkEntries[id]={status:'damaged',note:'',productionHeld:false};       refreshCard(id);updateCheckProgress();}
-function setMissing(id)    {checkEntries[id]={status:'missing',note:'',productionHeld:true};         refreshCard(id);updateCheckProgress();}
+function setMissing(id)    {checkEntries[id]={status:'missing',note:'',productionHeld:false};        refreshCard(id);updateCheckProgress();}
 function undoEntry(id)     {checkEntries[id]={status:'unconfirmed',note:'',productionHeld:false};    refreshCard(id);updateCheckProgress();}
 function setIssueNote(id,v){checkEntries[id].note=v;}
 function setProductionHeld(id,v){checkEntries[id].productionHeld=v;}
@@ -371,6 +389,8 @@ async function submitCheck(){
   const unconfirmed=active.filter(k=>(checkEntries[k.id]||{}).status==='unconfirmed');
   if(unconfirmed.length){err.style.display='';err.textContent='Please confirm all knives. Remaining: '+unconfirmed.map(k=>k.id).join(', ');return;}
   err.style.display='none';
+  const submitBtn=document.querySelector('#check-step2 .btn-primary');
+  submitBtn.disabled=true;submitBtn.textContent='Submitting…';
   const entries=active.map(k=>({knifeId:k.id,...checkEntries[k.id],issueType:checkEntries[k.id].status==='damaged'?'Damaged':checkEntries[k.id].status==='missing'?'Missing':''}));
   const allPresent=entries.every(e=>e.status!=='missing');
   const allGoodCondition=entries.every(e=>e.status==='present-good');
@@ -383,6 +403,7 @@ async function submitCheck(){
   document.getElementById('c-time').value=new Date().toTimeString().slice(0,5);
   resetCheckEntries();
   goCheckStep1();
+  submitBtn.disabled=false;submitBtn.textContent='Submit check';
   if(settings.scriptUrl){
     updateSync('syncing');
     try{
